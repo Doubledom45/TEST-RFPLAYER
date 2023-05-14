@@ -5,7 +5,7 @@
   "issue_tracker": "https://github.com/crazymikefra/HA_RFPlayer/issues",
   "config_flow": true,
   "requirements": ["pyserial==3.5", "pyserial-asyncio==0.5"],
-  "codeowners": ["@Crazymikefra"],
+  "codeowners": ["@Crazymikefra","@Doubledom45"],
   "dependencies": [],
   "iot_class": "assumed_state",
   "version": "1.0.0"
