@@ -25,7 +25,24 @@
       "init": {
         "title": "GCE RFPlayer Options",
         "data": {
-          "automatic_add": "Add device automatically when signal received"
+          "automatic_add": "Add device automatically when signal received",
+          "conf_format": "Command format returned by RFPlayer",
+          "conf_receiver_disable": "Protocols to inhibate",
+          "conf_freq_h":"Hig frequency band",
+          "conf_freq_l":"Low frequency band",
+          "conf_selectivity_h":"Selectivity level on high band",
+          "conf_selectivity_l":"Selectivity level on low band",
+          "conf_sensitivity_h":"Sensitivity level on high band",
+          "conf_sensitivity_l":"Sensitivity level on low band",
+          "conf_dsptrigger_h":"DSP triggering level on high band",
+          "conf_dsptrigger_l":"DSP triggering level on low band",
+          "conf_rflink":"RFLink Engine",
+          "conf_rflinktrigger_h":"RFLink Trigger level on high band",
+          "conf_rflinktrigger_l":"RFLink Trigger level on low band",
+          "conf_lbt":"Listen Before Talk Level",
+          "conf_repeater_disable":"Repeater protocols to inhibate",
+          "conf_ledactivity":"Led Activity",
+          "conf_trace":"Functions to trace"
         }
       }
     }

@@ -31,10 +31,11 @@ class ProtocolBase(asyncio.Protocol):
         self,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         disconnect_callback: Optional[Callable[[Optional[Exception]], None]] = None,
-        init_options: Optional[Sequence[dict]] = None,
+        options: Optional[Sequence[dict]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize class."""
+        self.options = options
         if loop:
             self.loop = loop
         else:
@@ -45,35 +46,33 @@ class ProtocolBase(asyncio.Protocol):
         self.disconnect_callback = disconnect_callback
 
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
-        """Just logging for now.
-        INFO LORS DU FACTORYRESET
-        SENSITIVITY H/L =0 Default value - High sensitivity (-0dB)
-        SELECTIVITY H/L =0 : Default value - Medium selectivity (300Khz)
-        DSPTRIGGER Default values -  H 868Mhz = 6dBm /L 433 Mhz = 8dBm -- Valeur : de 4 à 20 [La valeur 0 remet la valeur par défaut] C'est le niveau de détection Trame et Analyse !
-        RFLINK default RFLINK engine is enabled
-        RFLINKTRIGGER Default values - H 868Mhz = 10dBm  /L 433 Mhz = 12dBm -- Valeur : de 4 à 20 [La valeur 0 remet la valeur par défaut] C'est le niveau de détection en RFLINK de Trame et Analyse !
-        LBT Default value : 16dBm    Val : 6 à 30 dBm Le Rfplayer attendra ( maxi 3 sec) un silence avant d'envoyer des trames        
-        """
+        """Just logging for now."""
         self.transport = transport
+        #self.send_raw_packet("ZIA++HELLO")
+        #for command in self.options.get('START_COMMANDS',[]):
+        #    self.send_raw_packet("ZIA++"+command)
+        
+        
+        #log.debug("initialized")
+    
+    def init_commands(self) -> None:
+        """Just logging for now."""
+        #self.transport = transport
         self.send_raw_packet("ZIA++HELLO")
-##        self.send_raw_packet("ZIA++FACTORYRESET")
-##        self.send_raw_packet("ZIA++RECEIVER + *")
-##        self.send_raw_packet("ZIA++FORMAT JSON")
-##        self.send_raw_packet("ZIA++STATUS TXT") # si tu envoie la demande de status, il faut autoriser le log ?
-        if self.init_options['START_COMMANDS']:
-            for command in self.init_options['START_COMMANDS']:
-                self.send_raw_packet("ZIA++"+command)
- 
+        for command in self.options.get('START_COMMANDS',[]):
+            self.send_raw_packet("ZIA++"+command)
+        
+        
+        #log.debug("initialized")
+
     def data_received(self, data: bytes) -> None:
         """Add incoming data to buffer."""
         try:
             decoded_data = data.decode()
-#             log.debug("data:", decoded_data)
         except UnicodeDecodeError:
             invalid_data = data.decode(errors="replace")
             log.warning("Error during decode of data, invalid data: %s", invalid_data)
         else:
-            log.debug("received data: %s", decoded_data.strip())
             self.buffer += decoded_data
             self.handle_lines()
 
@@ -84,7 +83,7 @@ class ProtocolBase(asyncio.Protocol):
             if valid_packet(line):
                 self.handle_raw_packet(line)
             else:
-                log.warning("dropping invalid data: %s", line) # Voir ZIA66 = reception trame EDISIOFRAME
+                log.warning("dropping invalid data: %s", line)
 
     def handle_raw_packet(self, raw_packet: str) -> None:
         """Handle one raw incoming packet."""
@@ -113,16 +112,17 @@ class PacketHandling(ProtocolBase):
         self,
         *args: Any,
         packet_callback: Optional[Callable[[PacketType], None]] = None,
-        init_options: Optional[Sequence[dict]] = None,
+        options: Optional[Sequence[dict]] = None,
         **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization.
+
         packet_callback: called with every complete/valid packet
         received.
         """
-        log.debug("PacketHandling")
+        #log.debug("PacketHandling")
         super().__init__(*args, **kwargs)
-        self.init_options = init_options
+        self.options = options
         if packet_callback:
             self.packet_callback = packet_callback
 
@@ -139,7 +139,7 @@ class PacketHandling(ProtocolBase):
                 if packet != None:
                     #log.debug("decoded packet: %s", packet)
                     if "ok" in packet:
-#                        # handle response packets internally
+                        # handle response packets internally
                         log.debug("command response: %s", packet)
                         self.handle_response_packet(packet)
                     else:
@@ -151,8 +151,8 @@ class PacketHandling(ProtocolBase):
     def handle_packet(self, packet: PacketType) -> None:
         """Process incoming packet dict and optionally call callback."""
         if self.packet_callback:
-#            # forward to callback
-#            #log.debug("forwarding packet: %s to %s", packet,self.packet_callback.__code__)
+            # forward to callback
+            #log.debug("forwarding packet: %s to %s", packet,self.packet_callback.__module__+"/"+self.packet_callback.__name__)
             self.packet_callback(packet)
         else:
             log.debug("packet with no callback %s", packet)
@@ -175,66 +175,26 @@ class PacketHandling(ProtocolBase):
     ) -> None:
         """Send device command to rfplayer gateway."""
         if device_id is not None:
- ###     La commande EDISIOFRAME avec ON ou OFF n'existe PAS MAIS ON PEUX ENVOYER avec PROTOCOL et ID [doit être la commande Hexa]
-            if protocol == "EDISIOFRAME" : # A VOIR L'ENVOIE DEVRAIT ETRE DANS Commande ? INSTRUITE PLUS BAS !
-                self.send_raw_packet(f"ZIA++{protocol} {device_id}") # EST OK SI ID= commande HEXA !
-
-## modif envoie cde Protocol avec Jamming avec ID et ( commande ) Util si création !
-            elif protocol == "JAMMING" :
-                if command == "ON" :
-                    self.send_raw_packet(f"ZIA++{protocol} {device_id}") # Permet d'avoir un ID qui représente le niveau
-                elif command == "OFF" :
-                    self.send_raw_packet(f"ZIA++{protocol} 0")
-                else:
-                    self.send_raw_packet(f"ZIA++{protocol} {command} {device_id}") # dans le cas d'une commande depuis dévelopeur !
-
-## Peut servir pour le SIMULATE mettre dans Commande avec <delay> de  1 à 255 [secondes] Util si création !
-            elif protocol == "JAMMING SIMULATE" :
-                if command == "ON" :
-                    self.send_raw_packet(f"ZIA++{protocol} {device_id}") # Permet d'avoir un ID qui représente le <delay>
-                elif command == "OFF" :
-                    self.send_raw_packet(f"ZIA++{protocol}") #Envoie le simulate avec réponse dans 5 sec si JAMMING "ON"
-                else:
-                    self.send_raw_packet(f"ZIA++{protocol} {command} {device_id}") # dans le cas d'une commande depuis dévelopeur avec commande= SIMULATE !
-## Test pour DOMIA ou chacon ID <256
-            elif protocol == "DOMIA" or protocol == "CHACON" :
-                    self.send_raw_packet(f"ZIA++{command} {device_id} {protocol}") # Permet d'avoir un ID qui représente le N° du Bp Limité au 256 premier ID (FIRMWARE)
+            if protocol == "EDISIOFRAME" :
+                self.send_raw_packet(f"ZIA++{protocol} {device_id}")
             else :
-                self.send_raw_packet(f"ZIA++{command} ID {device_id} {protocol}")
-
+                self.send_raw_packet(f"ZIA++{command} {protocol} ID {device_id}")
         elif device_address is not None:
             DIM_ADDON=""
             if command == "DIM" :
                 DIM_ADDON="%50"
-            self.send_raw_packet(f"ZIA++{command} {device_address} {protocol} {DIM_ADDON}")
-
+            self.send_raw_packet(f"ZIA++{command} {protocol} {device_address} {DIM_ADDON}")
         elif protocol == "EDISIOFRAME":
+            self.send_raw_packet(f"ZIA++{command}")
+        else:
             self.send_raw_packet(f"ZIA++{protocol} {command}")
 
-##bug jamming pas d'ID
-## modif envoie cde Protocol sans ID si Jamming ( commande ) vient du développeur ! Util si création !
-        else:
-            if protocol == "JAMMING" :
-                if command == "ON" : #la cde n'existe pas vraiement , mais peut-être utilisé pour !
-                    self.send_raw_packet(f"ZIA++{protocol} 7")
-                elif command == "OFF" : #la cde n'existe pas vraiement , mais peut-être utilisé pour !
-                    self.send_raw_packet(f"ZIA++{protocol} 0")
-                else:
-                    self.send_raw_packet(f"ZIA++{protocol} {command}") # on peut mettre le niveau de détection de 0 à 10
+    def send_raw_command(
+        self,
+        command: str,
+    ) -> None:
+        self.send_raw_packet(f"{command}")
 
-## Peut servir pour le SIMULATE mettre dans Commande avec <delay> de  1 à 255 [secondes] Util si création !
-
-            elif protocol == "JAMMING SIMULATE" :
-                if command == "ON" :
-                    self.send_raw_packet(f"ZIA++{protocol} 30") # Permet d'avoir un nbr qui représente le <delay> forcé ici 30sec
-                elif command == "OFF" :
-                    self.send_raw_packet(f"ZIA++{protocol}") #Envoie le simulate avec réponse dans 5 sec si JAMMING [NIVEAU] "ON"
-
-            else :
-                self.send_raw_packet(f"ZIA++{command} {protocol}") #ATTENTION AU FORMAT DE LA COMMANDE !
-
-        """Les cde RECEIVER ET REPEATER peuvent être initiés dans commande avec signe + ou - et la sélection du protocol."""
- 
 class CommandSerialization(PacketHandling):
     """Logic for ensuring asynchronous commands are sent in order."""
 
@@ -242,13 +202,13 @@ class CommandSerialization(PacketHandling):
         self,
         *args: Any,
         packet_callback: Optional[Callable[[PacketType], None]] = None,
-        init_options: Optional[Sequence[dict]] = None,
+        options: Optional[Sequence[dict]] = None,
         **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization."""
-#        #log.debug("CommandSerialization")
+        #log.debug("CommandSerialization")
         super().__init__(*args, **kwargs)
-        self.init_options = init_options
+        self.options = options
         if packet_callback:
             self.packet_callback = packet_callback
         self._event = asyncio.Event()
@@ -256,7 +216,7 @@ class CommandSerialization(PacketHandling):
 
     def handle_response_packet(self, packet: PacketType) -> None:
         """Handle response packet."""
-        log.debug("handle_response_packet")
+        #log.debug("handle_response_packet")
         self._last_ack = packet
         self._event.set()
 
@@ -271,7 +231,18 @@ class CommandSerialization(PacketHandling):
         async with self._lock:
             self.send_command(protocol, command, device_address, device_id)
             self._event.clear()
-#            # await self._event.wait()
+            # await self._event.wait()
+        return True
+    
+    async def send_raw_command_ack(
+        self,
+        command: str,
+    ) -> bool:
+        """Send command, wait for gateway to repond."""
+        async with self._lock:
+            self.send_raw_command(command)
+            self._event.clear()
+            # await self._event.wait()
         return True
 
 
@@ -290,14 +261,14 @@ class EventHandling(PacketHandling):
         *args: Any,
         event_callback: Optional[Callable[[PacketType], None]] = None,
         ignore: Optional[Sequence[str]] = None,
-        init_options: Optional[Sequence[dict]] = None,
+        options: Optional[Sequence[dict]] = None,
         **kwargs: Any,
     ) -> None:
         """Add eventhandling specific initialization."""
         super().__init__(*args, **kwargs)
         self.event_callback = event_callback
-        self.init_options = init_options
-#        # suppress printing of packets
+        self.options = options
+        # suppress printing of packets
         log.debug("EventHandling")
         if not kwargs.get("packet_callback"):
             self.packet_callback = lambda x: None
@@ -315,10 +286,12 @@ class EventHandling(PacketHandling):
             if self.ignore_event(event["id"]):
                 log.debug("ignoring event with id: %s", event)
                 continue
-            log.debug("got event: %s", event)
+            #log.debug("got event: %s", event)
             if self.event_callback:
+                #log.debug("forwarding event to: %s",self.event_callback.__module__+"/"+self.event_callback.__name__)
                 self.event_callback(event)
             else:
+                log.debug("Event handled locally")
                 self.handle_event(event)
 
     def handle_event(self, event: PacketType) -> None:
@@ -369,7 +342,7 @@ def create_rfplayer_connection(
     disconnect_callback: Optional[Callable[[Optional[Exception]], None]] = None,
     ignore: Optional[Sequence[str]] = None,
     loop: Optional[asyncio.AbstractEventLoop] = None,
-    init_options: Optional[Sequence[dict]] = None
+    options: Optional[Sequence[dict]] = None
 ) -> "Coroutine[Any, Any, Tuple[asyncio.BaseTransport, ProtocolBase]]":
     """Create Rflink manager class, returns transport coroutine."""
     if loop is None:
@@ -382,7 +355,7 @@ def create_rfplayer_connection(
         event_callback=event_callback,
         disconnect_callback=disconnect_callback,
         ignore=ignore if ignore else [],
-        init_options=init_options,
+        options=options,
     )
 
     # setup serial connection

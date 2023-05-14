@@ -1,6 +1,6 @@
 import logging
 
-##Debogage des infotypes
+#Debogage des infotypes
 infotypes_debug=False
 
 log = logging.getLogger(__name__)
@@ -71,10 +71,9 @@ def infoType_1_decode(infos:list,allowEmptyID:bool=False) -> list:
 
     fields_found["id"]=infos["id"]
     fields_found["command"]=fields_found["subType"]
-# # Voir pour différencier le Bouton G [All] dans un ID particulier Test sur ALL_ON ou OFF car sinon reprend l'ID du Bp1
+## Voir pour différencier le Bouton G [All] dans un ID particulier Test sur ALL_ON ou OFF car sinon reprend l'ID du Bp1
     if fields_found["command"] == "ALL_ON" or fields_found["command"] == "ALL_OFF":
         fields_found["id"]=infos["id"]+"G"
-
     if fields_found["id"]!="0" or allowEmptyID:
         return fields_found
 
@@ -169,9 +168,9 @@ def infoType_5_decode(infos:list,allowEmptyID:bool=False) -> list:
     if fields_found["subType"] == None or fields_found["subType"] == "" : fields_found["subType"]=infos.get("subType")
     fields_found["id_PHY"]= infos["id_PHYMeaning"]
     fields_found["adr_channel"]=infos["adr_channel"]
+    fields_found["qualifier"]=infos["qualifier"]
     fields_found["battery_level"]=(1-int(infos["lowBatt"]))*100
     fields_found["battery_level_unit"]="%"
-    fields_found["battery_unit"]="%"
 
     match int(infos["qualifier"])>>4:
         case 1 :
@@ -370,10 +369,10 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
     #fields_found["info"]=infos.get("infoMeaning")
     Fields_Infos=infos.get("infoMeaning").split(",")
     fields_found["model"]=Fields_Infos[0]
-    fields_found["battery"]=Fields_Infos[1].split("V")[0] #supression du V dans info bat
+    fields_found["battery"]=Fields_Infos[1].split("V")[0]
     fields_found["battery_unit"]="V"
+    fields_found["button"]=infos["qualifier"]
 
-    fields_found["button"]=int(infos["subType"]) #Ajout d'une info button pour remonter en numérique l'info de la cde 
 
     match fields_found["subType"]:
         case "NULL" :
@@ -427,13 +426,9 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
             fields_found["command"]=fields_found["subType"]
             fields_found["temperature"]=int(infos['add0'])*0.01
             fields_found["temperature_unit"]="°C"
-###
-            ## A vérifier si existe un modele qui a l'hygro
-            ##fields_found["hygrometry"]=int(infos['add1'])*0.01
-            ##fields_found["hygrometry_unit"]="%"
-            ##fields_found["debug"]=infos
-###
-
+            fields_found["hygrometry"]=int(infos['add1'])*0.01
+            fields_found["hygrometry_unit"]="%"
+            #fields_found["debug"]=infos
         case "DOOR_OPEN" :
             fields_found["command"]=fields_found["subType"]
         case "BROADCAST_QUERY" :
@@ -458,12 +453,12 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
             fields_found["command"]=fields_found["subType"]
             fields_found["debug"]=infos
 
-        # #Traduction complémentaire : 0x01 ON , 0x02 ARRET , 0x61(97) HG, 0x62(98) ECO , 0x63(99) CONFORT
+        #Traduction complémentaire : 0x01 ON , 0x02 OFF , 0x61(97) HG, 0x62(98) ECO , 0x63(99) CONFORT
         case "1" :
             fields_found["subType"]="ON"
             fields_found["command"]=fields_found["subType"]
         case "2" :
-            fields_found["subType"]="ARRET"
+            fields_found["subType"]="OFF"
             fields_found["command"]=fields_found["subType"]
         case "97" :
             fields_found["subType"]="HG"
@@ -474,16 +469,12 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
         case "99" :
             fields_found["subType"]="CONFORT"
             fields_found["command"]=fields_found["subType"]
-
+        
         case _ :
             fields_found["command"]=fields_found["subType"]
             fields_found["debug"]=infos
 
     fields_found["id"]=infos["id"]
     
-# # permet de différencier le N° du Bp => plusieurs entités 
-    if fields_found["model"] == "EMITRBTN": # Voir si l'on prend le subtype !
-        fields_found["id"]=infos["id"]+"-"+infos["qualifier"]
-# #
     if fields_found["id"]!="0" or allowEmptyID:
         return fields_found
