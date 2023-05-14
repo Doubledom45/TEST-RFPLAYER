@@ -31,7 +31,6 @@ send_command:
               - "TIC"
               - "FS20"
               - "JAMMING"
-              - "JAMMING SIMULATE"
               - "EDISIO"
               - "EDISIOFRAME"
           mode: dropdown
@@ -69,6 +68,17 @@ send_command:
               - "sensor"
               - "switch"
           mode: dropdown
+
+send_raw_command:
+  description: Send device raw command through RFPlayer.
+  fields:
+    command:
+      name: Command
+      description: The command to be sent.
+      required: true
+      example: "ZIA++STATUS"
+      selector:
+        text:
 
 set_device_address:
   description: Set device adress for RFPlayer entity.
@@ -108,3 +118,14 @@ test_frame:
       example: 'ZIA33{ "frame" :{"header": {"frameType": "0", "cluster": "0", "dataFlag": "0", "rfLevel": "-91", "floorNoise": "-107", "rfQuality": "4", "protocol": "5", "protocolMeaning": "OREGON", "infoType": "4", "frequency": "433920"},"infos": {"subType": "0", "id_PHY": "0x1A2D", "id_PHYMeaning": "THGR122/228/238/268,THGN122/123/132", "adr_channel": "22274",  "adr": "87",  "channel": "2",  "qualifier": "33",  "lowBatt": "1", "measures" : [{"type" : "temperature", "value" : "+21.3", "unit" : "Celsius"}, {"type" : "hygrometry", "value" : "58", "unit" : "%"}]}}}'
       selector:
         text:
+
+remove_entity:
+  description: Send device raw command through RFPlayer.
+  fields:
+    id:
+      name: Entity ID
+      description: The ID of the entity
+      required: true
+      selector:
+        entity:
+          integration : rfplayer
