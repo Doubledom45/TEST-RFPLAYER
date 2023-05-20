@@ -169,19 +169,19 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
 
             Init_Schema[CONF_RECEIVER_DISABLE] = selector({
                 "select": {
-                    "options": ["X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO"],
+                    "options": ["*", "X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO", "* + *"],
                     "multiple":True
                 },
             })
             Init_Schema[CONF_REPEATER_DISABLE] = selector({
                 "select": {
-                    "options": ["X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO"],
+                    "options": ["*", "X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO", "* + *"],
                     "multiple":True
                 },
             })
             Init_Schema[CONF_TRACE] = selector({
                 "select": {
-                    "options": ["ALARM", "RECEIVER", "TRANSMITTER", "TRANSCODER", "REPEATER", "JAMMING", "RFLINK"],
+                    "options": ["*", "ALARM", "RECEIVER", "TRANSMITTER", "TRANSCODER", "REPEATER", "JAMMING", "RFLINK" "* - *"],
                     "multiple":True
                 },
             })
