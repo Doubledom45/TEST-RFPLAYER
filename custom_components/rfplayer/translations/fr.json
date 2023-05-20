@@ -26,7 +26,7 @@
           "title": "Options GCE RFPlayer",
           "data": {
             "automatic_add":"Ajouter les appareil automatiquement lorsqu'un signal est reçu",
-            "conf_format": "Fomats des commandes retournées par RFPlayer ATTENTION SI PAS JSON -> l'addon HS",
+            "conf_format": "JSON Obligatoire pour l'addon [sinon HS]",
             "conf_receiver_disable": "Protocoles à désactiver",
             "conf_freq_h":"Bande de fréquence haute",
             "conf_freq_l":"Bande de fréquence basse",
