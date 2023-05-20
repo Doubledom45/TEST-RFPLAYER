@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 1.0.3
-Test avec ajout de la sélection des commandes
+Test avec ajout de la sélection des commandes.
 
 ## 1.0.2
 Modification initialisation, problème de démarrage !
