@@ -10,17 +10,25 @@ send_command:
       selector:
         select:
           options:
+              - " "
               - 1 FACTORYRESET. FORMAT JSON. STATUS. JAMMING 7. JAMMING SIMULATE
               - HELLO
               - PING
+              - "ON"
+              - "OFF"
+              - DIM %4
+              - ASSOC
+              - DISSOC
+              - ASSOC_OFF
+              - DISSOC_OFF
+              - ALL_ON
+              - ALL_OFF
               - RECEIVER + *
               - REPEATER + *
               - REPEATER ON
               - REPEATER OFF
               - LEDACTIVITY 0
               - LEDACTIVITY 1
-              - "ON"
-              - "OFF"
               - DIM %4
               - ASSOC
               - DISSOC
@@ -54,29 +62,41 @@ send_command:
           mode: dropdown
     protocol:
       name: Protocol
-      description: RFPlayer compatible protocol.
+      description: RFPlayer compatible protocol.[parametre]
       required: true
       example: CHACON
       selector:
         select:
           options:
               - " "
-              - "X10"
-              - "VISONIC"
               - "BLYSS"
               - "CHACON"
-              - "OREGON"
               - "DOMIA"
-              - "OWL"
-              - "X2D"
-              - "RTS"
-              - "KD101"
-              - "PARROT"
-              - "TIC"
-              - "FS20"
-              - "JAMMING"
               - "EDISIO"
               - "EDISIOFRAME"
+              - "FS20"
+              - "JAMMING"
+              - "JAMMING SIMULATE"
+              - "KD101"
+              - "OREGON"
+              - "OREGONV1"
+              - "OREGONV2"
+              - "OREGONV3/OWL"
+              - "OWL"
+              - "PARROT"
+              - "RTS"
+              - "TIC"
+              - "VISONIC"
+              - "VISONIC433"
+              - "VISONIC868"
+              - "X10"
+              - "X2D"
+              - "X2D433"
+              - "X2D868"
+              - "X2DELEC"
+              - "X2DGAS"
+              - "X2DSHUTTER"
+              - " "
           mode: dropdown
     device_address:
       name: Device address
@@ -107,10 +127,10 @@ send_command:
       selector:
         select:
           options:
+              - "switch"
               - "cover"
               - "number"
               - "sensor"
-              - "switch"
           mode: dropdown
 
 send_raw_command:
@@ -164,7 +184,7 @@ test_frame:
         text:
 
 remove_entity:
-  description: Send device raw command through RFPlayer.
+  description: Send device raw command through RFPlayer.[test]
   fields:
     id:
       name: Entity ID
