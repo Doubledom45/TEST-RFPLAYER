@@ -85,7 +85,7 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
         data = self.config_entry.data.copy()
         data[CONF_AUTOMATIC_ADD] = True
         data[CONF_FORMAT] = "JSON"
-        data[CONF_FREQ_H] = 868950
+        data[CONF_FREQ_H] = 868350
         data[CONF_FREQ_L] = 433920
         data[CONF_SELECTIVITY_H] = 0
         data[CONF_SELECTIVITY_L] = 0
