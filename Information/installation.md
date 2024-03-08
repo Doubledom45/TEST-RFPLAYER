@@ -27,7 +27,7 @@ Suivant comment on a installer la version, il se peut qu’il y ai encore une tr
 
 # Installation propre par HACS
 
-SINON Copiez le dossier `custom_component/rfplayer` dans votre répertoire de configuration..
+SINON Copiez le dossier `custom_components/rfplayer` dans votre répertoire de configuration..
 
 ## -HACS INSTALLATION
 
