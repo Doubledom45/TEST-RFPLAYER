@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.1
+Modification pour version HA 2024.3
+
 ## 1.0.3
 Test avec ajout de la sélection des commandes.
 
