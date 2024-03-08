@@ -81,104 +81,12 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input: dict = None):
         """Manage the options."""
         log.debug("Init:%s",user_input)
-        # if user_input is None:
-        #     config = self.config_entry.data
-        #     options = self.config_entry.options
-
-
-        #     Init_Schema={
-                        
-        #                 vol.Required(
-        #                     CONF_AUTOMATIC_ADD,
-        #                     default= True
-        #                 ): bool,
-        #                 vol.Required(
-        #                     CONF_FORMAT, 
-        #                     default= "JSON"
-        #                 ): vol.In(["OFF", "BINARY", "HEXA", "HEXA_FIXED","TEXT","XML","JSON"]),
-        #                 vol.Required(
-        #                     CONF_FREQ_H, 
-        #                     default = 868950
-        #                 ): vol.In(["0", "868950", "868350"]),
-        #                 vol.Required(
-        #                     CONF_FREQ_L, 
-        #                     default= 433920
-        #                 ): vol.In(["0", "433420", "433920"]),
-        #                 vol.Required(
-        #                     CONF_SELECTIVITY_H, 
-        #                     default= 0
-        #                 ): vol.In(["0", "1", "2", "3", "4", "5"]),
-        #                 vol.Required(
-        #                     CONF_SELECTIVITY_L, 
-        #                     default= 0
-        #                 ): vol.In(["0", "1", "2", "3", "4", "5"]),
-        #                 vol.Required(
-        #                     CONF_SENSITIVITY_H, 
-        #                     default= 0
-        #                 ): vol.In(["0", "1", "2", "3", "4", "5"]),
-        #                 vol.Required(
-        #                     CONF_SENSITIVITY_L, 
-        #                     default= 0
-        #                 ): vol.In(["0", "1", "2", "3", "4", "5"]),
-        #                 vol.Required(
-        #                     CONF_DSPTRIGGER_H, 
-        #                     default= 6
-        #                 ): int,
-        #                 vol.Required(
-        #                     CONF_DSPTRIGGER_L, 
-        #                     default= 8
-        #                 ): int,
-        #                 vol.Required(
-        #                     CONF_RFLINK, 
-        #                     default= True
-        #                 ): bool,
-        #                 vol.Required(
-        #                     CONF_RFLINKTRIGGER_H, 
-        #                     default= 10
-        #                 ): int,
-        #                 vol.Required(
-        #                     CONF_RFLINKTRIGGER_L, 
-        #                     default= 12
-        #                 ): int,
-        #                 vol.Required(
-        #                     CONF_LBT, 
-        #                     default= 16
-        #                 ): int,
-        #                 vol.Required(
-        #                     CONF_LEDACTIVITY, 
-        #                     default= True
-        #                 ): bool,
-                        
-        #             }
-
-        #     Init_Schema[CONF_RECEIVER_DISABLE] = selector({
-        #         "select": {
-        #             "options": ["*", "X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO", "* + *"],
-        #             "multiple":True
-        #         },
-        #     })
-        #     Init_Schema[CONF_REPEATER_DISABLE] = selector({
-        #         "select": {
-        #             "options": ["*", "X10", "RTS", "VISONIC", "BLYSS", "CHACON", "OREGONV1", "OREGONV2", "OREGONV3/OWL", "DOMIA", "X2D", "KD101", "PARROT", "TIC", "FS20", "JAMMING", "EDISIO", "* + *"],
-        #             "multiple":True
-        #         },
-        #     })
-        #     Init_Schema[CONF_TRACE] = selector({
-        #         "select": {
-        #             "options": ["*", "ALARM", "RECEIVER", "TRANSMITTER", "TRANSCODER", "REPEATER", "JAMMING", "RFLINK" "* - *"],
-        #             "multiple":True
-        #         },
-        #     })
-
-        #     return self.async_show_form(
-        #         step_id="init",
-        #         data_schema=vol.Schema(Init_Schema),
-        #     )
+ 
         data = self.config_entry.data.copy()
         data[CONF_AUTOMATIC_ADD] = True
         data[CONF_FORMAT] = "JSON"
-        data[CONF_FREQ_H] = 0
-        data[CONF_FREQ_L] = 0
+        data[CONF_FREQ_H] = 868950
+        data[CONF_FREQ_L] = 433920
         data[CONF_SELECTIVITY_H] = 0
         data[CONF_SELECTIVITY_L] = 0
         data[CONF_SENSITIVITY_H] = 4
