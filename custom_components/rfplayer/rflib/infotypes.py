@@ -357,7 +357,27 @@ def infoType_11_decode(infos:list,allowEmptyID:bool=False) -> list:
     
     if fields_found["id"]!="0" or allowEmptyID:
         return fields_found
+
+def infoType_13_decode(infos:list,allowEmptyID:bool=False) -> list:
+    if infotypes_debug: log.debug("Decode InfoType 13: %d",infos)
+    fields_found = {}
     
+    fields_found["subType"]=infos.get("subTypeMeaning")
+    if fields_found["subType"] == None or fields_found["subType"] == "" : fields_found["subType"]=infos.get("subType")
+    fields_found["qualifier"]=infos["qualifier"]
+
+    elements={'cnt1':'Wh','cnt2':'Wh','power':'W'}
+    for measure in infos["measures"]:
+        if measure['type'] in elements:
+            fields_found[measure['type']]= measure['value']
+            if elements[measure['type']] != '':
+                fields_found[measure['type']+'_unit']= elements[measure['type']]
+
+    fields_found["id"]=infos["id"]
+    
+    if fields_found["id"]!="0" or allowEmptyID:
+        return fields_found
+
 def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
     if infotypes_debug: log.debug("Decode InfoType 15 : %d",infos)
     fields_found = {}
@@ -365,14 +385,12 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
     fields_found["subType"]=infos.get("subTypeMeaning")
     if fields_found["subType"] == None or fields_found["subType"] == "" : fields_found["subType"]=infos.get("subType")
     fields_found["qualifier"]=infos["qualifier"]
-
-    #fields_found["info"]=infos.get("infoMeaning")
     Fields_Infos=infos.get("infoMeaning").split(",")
     fields_found["model"]=Fields_Infos[0]
     fields_found["battery"]=Fields_Infos[1].split("V")[0]
     fields_found["battery_unit"]="V"
-    fields_found["button"]=infos["qualifier"]
-
+#    fields_found["button"]=infos["qualifier"]
+    fields_found["button"]=int(infos["subType"]) #Ajout d'une info button pour remonter en numérique l'info de la cde 
 
     match fields_found["subType"]:
         case "NULL" :
@@ -475,6 +493,10 @@ def infoType_15_decode(infos:list,allowEmptyID:bool=False) -> list:
             fields_found["debug"]=infos
 
     fields_found["id"]=infos["id"]
-    
+
+# # permet de différencier le N° du Bp => plusieurs entités 
+    if fields_found["model"] == "EMITRBTN": # Voir si l'on prend le subtype !
+        fields_found["id"]=infos["id"]+"-"+infos["qualifier"]
+# #
     if fields_found["id"]!="0" or allowEmptyID:
         return fields_found
