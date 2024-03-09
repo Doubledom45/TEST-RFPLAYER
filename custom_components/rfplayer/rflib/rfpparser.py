@@ -152,6 +152,10 @@ def decode_packet(packet: str) -> list:
                 protocol="WELCOME"
                 message=frame
                 packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
+            elif frame.startswith('ZIA--'):
+                protocol="Status"
+                message= frame
+                packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
             elif frame.startswith('RECEIVED'):
                 protocol="RECEIVED"
                 message=frame
