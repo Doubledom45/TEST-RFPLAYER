@@ -11,7 +11,7 @@ send_command:
         select:
           options:
               - " "
-              - 1 FACTORYRESET. FORMAT JSON. STATUS. JAMMING 7. JAMMING SIMULATE
+              - 1 FACTORYRESET. FORMAT JSON. STATUS JSON. JAMMING 7. JAMMING SIMULATE
               - HELLO
               - PING
               - "ON"
@@ -38,7 +38,7 @@ send_command:
               - ALL_OFF
               - JAMMING 7
               - JAMMING SIMULATE
-              - STATUS
+              - STATUS JSON
               - EDISIOFRAME
               - FREQ L 433920
               - FREQ L 433420
