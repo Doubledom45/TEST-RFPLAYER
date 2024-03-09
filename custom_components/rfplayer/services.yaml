@@ -38,6 +38,7 @@ send_command:
               - ALL_OFF
               - JAMMING 7
               - JAMMING SIMULATE
+              - STATUS
               - EDISIOFRAME
               - FREQ L 433920
               - FREQ L 433420
@@ -132,3 +133,25 @@ send_command:
               - "number"
               - "sensor"
           mode: dropdown
+
+set_device_address:
+  description: Set device adress for RFPlayer entity.
+  fields:
+    device_address:
+      name: Device address
+      description: Device address.
+      required: false
+      example: A1
+      selector:
+        text:
+
+test_frame:
+  description: Test a frame inside RFPlayer.
+  fields:
+    frame:
+      name: Frame
+      description: The frame to test.
+      required: true
+      example: 'ZIA33{ "frame" :{"header": {"frameType": "0", "cluster": "0", "dataFlag": "0", "rfLevel": "-91", "floorNoise": "-107", "rfQuality": "4", "protocol": "5", "protocolMeaning": "OREGON", "infoType": "4", "frequency": "433920"},"infos": {"subType": "0", "id_PHY": "0x1A2D", "id_PHYMeaning": "THGR122/228/238/268,THGN122/123/132", "adr_channel": "22274",  "adr": "87",  "channel": "2",  "qualifier": "33",  "lowBatt": "1", "measures" : [{"type" : "temperature", "value" : "+21.3", "unit" : "Celsius"}, {"type" : "hygrometry", "value" : "58", "unit" : "%"}]}}}'
+      selector:
+        text:
