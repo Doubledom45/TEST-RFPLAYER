@@ -316,7 +316,7 @@ async def async_setup_entry(hass, entry):
             event_callback=event_callback,
             disconnect_callback=reconnect,
             loop=hass.loop,
-            options={'START_COMMANDS':["1 FORMAT JSON . RECEIVER + *. SENSITIVITY L 0. SENSITIVITY H 0. SELECTIVITY L 0. SELECTIVITY H 0. RFLINK 1. RFLINKTRIGGER L 0. RFLINKTRIGGER H 0. LBT 16. STATUS"]},
+            options={'START_COMMANDS':["1 FORMAT JSON . RECEIVER + *. SENSITIVITY L 0. SENSITIVITY H 0. SELECTIVITY L 0. SELECTIVITY H 0. RFLINK 1. RFLINKTRIGGER L 0. RFLINKTRIGGER H 0. LBT 16. STATUS JSON"]},
         )
         try:
             with async_timeout.timeout(CONNECTION_TIMEOUT):
