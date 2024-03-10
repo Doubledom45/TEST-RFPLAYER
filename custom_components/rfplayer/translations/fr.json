@@ -2,7 +2,7 @@
     "config": {
       "step": {
         "user": {
-          "title": "GCE RFPlayer",
+          "title": "ZieBlue RFPlayer",
           "description": "Configurer l'intégration RFPlayer",
           "data": {
             "device": "Appareil USB RFPlayer",
@@ -23,7 +23,7 @@
     "options": {
       "step": {
         "init": {
-          "title": "Options GCE RFPlayer",
+          "title": "Options ZieBlue RFPlayer",
           "data": {
             "automatic_add":"Ajouter les appareil automatiquement lorsqu'un signal est reçu",
             "conf_format": "JSON Obligatoire pour l'addon [sinon HS]",
