@@ -1,0 +1,50 @@
+{
+    "config": {
+      "step": {
+        "user": {
+          "title": "ZieBlue RFPlayer",
+          "description": "Configurer l'intégration RFPlayer",
+          "data": {
+            "device": "Appareil USB RFPlayer",
+            "automatic_add": "Ajouter les appareil automatiquement lorsqu'un signal est reçu",
+            "reconnect_interval": "Interval de reconnexion"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+      },
+      "abort": {
+        "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+        "already_in_progress": "[%key:common::config_flow::abort::already_in_progress%]",
+        "unknown": "[%key:common::config_flow::error::unknown%]"
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "title": "Options ZieBlue RFPlayer",
+          "data": {
+            "automatic_add":"Ajouter les appareil automatiquement lorsqu'un signal est reçu",
+            "conf_format": "JSON Obligatoire pour l'addon [sinon HS]",
+            "conf_receiver_disable": "Protocoles à désactiver",
+            "conf_freq_h":"Bande de fréquence haute",
+            "conf_freq_l":"Bande de fréquence basse",
+            "conf_selectivity_h":"Niveau de filtrage signal sur bande haute",
+            "conf_selectivity_l":"Niveau de filtrage signal sur bande haute",
+            "conf_sensitivity_h":"Sensibilité sur bande haute",
+            "conf_sensitivity_l":"Sensibilité sur bande basse",
+            "conf_dsptrigger_h":"Niveau activation DSP sur bande haute",
+            "conf_dsptrigger_l":"Niveau activation DSP sur bande basse",
+            "conf_rflink":"Moteur RFLink",
+            "conf_rflinktrigger_h":"Niveau activation RFLink sur bande haute",
+            "conf_rflinktrigger_l":"Niveau activation RFLink sur bande basse",
+            "conf_lbt":"Niveau de silence avant envoi",
+            "conf_repeater_disable":"Protocoles répétés à désactiver",
+            "conf_ledactivity":"Activité LED",
+            "conf_trace":"Fonctions à tracer"
+          }
+        }
+      }
+    }
+  }
