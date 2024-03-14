@@ -1,5 +1,13 @@
 # ATTENTION FAIRE UNE SAUVEGARDE AVANT INSTALLATION
 
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE)
+
+
+[![Black][black-shield]][black]
+
+
+
 # HA-2024.3-RFPLAYER
 						## NEW Version RFPLAYER EN HA 2024.3
 # 🔎 Voir Lisez_moi.md en Français
