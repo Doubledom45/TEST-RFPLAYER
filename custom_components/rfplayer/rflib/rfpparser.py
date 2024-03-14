@@ -142,7 +142,7 @@ def decode_packet(packet: str) -> list:
 
     data = cast(PacketType, {"node": PacketHeader.gateway.name})
 
-    #log.debug("Packet : %s",packet)
+    log.debug("Packet : %s",packet)
     match packet[:5]:
         case "ZIA--":
             # Welcome messages and status directly send
