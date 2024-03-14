@@ -1,5 +1,6 @@
 # CHANGELOG
-
+## 1.2
+MAJ en cours
 ## 1.1
 Modification pour version HA 2024.3
 

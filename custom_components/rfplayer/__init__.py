@@ -24,7 +24,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import CoreState, callback
 import homeassistant.helpers.config_validation as cv
-
+#from homeassistant.helpers.device_registry import async_get_registry
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
@@ -32,9 +32,7 @@ from homeassistant.helpers.dispatcher import (
 )
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.restore_state import RestoreEntity
-
 from homeassistant import components
-
 
 from .const import *
 
@@ -67,7 +65,7 @@ TEST_FRAME_SCHEMA = vol.Schema(
     }
 )
 
-REMOVE_ENTITY_SCHEMA = vol.Schema(
+TEST_REMOVE_ENTITY_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ID): cv.entity_id,
     }
@@ -85,11 +83,9 @@ def identify_event_type(event):
 
 
 async def async_setup_entry(hass, entry):
-    """Set up GCE RFPlayer from a config entry."""
+    """Set up ZieBlue RFPlayer from a config entry."""
     
     _LOGGER.debug("Rfplayer Set Entry %s", entry)
-    #_LOGGER.debug("Rfplayer Set Entry-Data %s", entry.data)
-    #_LOGGER.debug("Rfplayer Set Entry-Options %s", entry.options)
     config = entry.data
     options = entry.options
 
@@ -149,12 +145,11 @@ async def async_setup_entry(hass, entry):
     
     async def async_test_frame(call):
         """Test Rfplayer frame."""
-        #_LOGGER.debug("Rfplayer test frame for %s", str(call.data.get('frame')))
         hass.data[DOMAIN][RFPLAYER_PROTOCOL].handle_raw_packet(
             call.data['frame']
         )
 
-    async def async_remove_entity(call):
+    async def async_test_remove_entity(call):
         #TODO:Trouver comment supprimer une entité
         """Remove an entity."""
         _LOGGER.debug("Removing entity %s",call.data[CONF_ID])
@@ -232,7 +227,7 @@ async def async_setup_entry(hass, entry):
     )
 
     hass.services.async_register(
-        DOMAIN, SERVICE_REMOVE_ENTITY, async_remove_entity, schema=REMOVE_ENTITY_SCHEMA
+        DOMAIN, SERVICE_REMOVE_ENTITY, async_remove_entry, schema=TEST_REMOVE_ENTITY_SCHEMA
     )
 
     
@@ -241,7 +236,7 @@ async def async_setup_entry(hass, entry):
     def event_callback(event):
 
         event_type = identify_event_type(event)
-        #_LOGGER.debug("event of type %s: %s", event_type, event)
+        # _LOGGER.debug("event of type %s: %s", event_type, event)
 
         # Don't propagate non entity events (eg: version string, ack response)
         if event_type not in hass.data[DOMAIN][DATA_ENTITY_LOOKUP]:
@@ -253,13 +248,7 @@ async def async_setup_entry(hass, entry):
         #_LOGGER.debug("List of entities : %s",str(hass.data[DOMAIN]))
         entity_id = hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id]
 
-        #_LOGGER.debug("Entity ID : %s",entity_id);
-        #_LOGGER.debug("Event ID : %s",event_id);
-
         if entity_id:
-            # Propagate event to every entity matching the device id
-            #_LOGGER.debug("passing event to %s", entity_id)
-            #_LOGGER.debug("Register available : %s",str(hass.data[DOMAIN][DATA_DEVICE_REGISTER]))
             async_dispatcher_send(
                 hass, SIGNAL_HANDLE_EVENT.format(entity_id), event)
         else:
@@ -267,15 +256,12 @@ async def async_setup_entry(hass, entry):
             if event_type in hass.data[DOMAIN][DATA_DEVICE_REGISTER]:
                 
                 _LOGGER.debug("device_id not known, adding new device")
-                _LOGGER.debug("event_type: %s",str(event_type))
-                _LOGGER.debug("event_id: %s",str(event_id))
-                _LOGGER.debug("event: %s",str(event))
-                #_LOGGER.debug(str(hass.data[DOMAIN][DATA_DEVICE_REGISTER]))
-                #_LOGGER.debug(str(hass.data[DOMAIN][DATA_DEVICE_REGISTER][event_type]))
-                
+                # _LOGGER.debug("event_type: %s",str(event_type))
+                # _LOGGER.debug("event_id: %s",str(event_id))
+                # _LOGGER.debug("event: %s",str(event))
+
                 hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id] = event
                 _add_device_to_base_config(event, event_id)
-                #_LOGGER.debug("calling: %s","hass.data["+DOMAIN+"]["+DATA_DEVICE_REGISTER+"]["+event_type+"]")
                 if inspect.isfunction(hass.data[DOMAIN][DATA_DEVICE_REGISTER][event_type]):
                     hass.async_create_task(
                         hass.data[DOMAIN][DATA_DEVICE_REGISTER][event_type](event)
@@ -311,13 +297,54 @@ async def async_setup_entry(hass, entry):
         """Set up connection and hook it into HA for reconnect/shutdown."""
         _LOGGER.info("Initiating Rfplayer connection")
 
+        ReceiverCommand="RECEIVER + *"
+        if options.get(CONF_RECEIVER_DISABLE,None)!=None :
+            ReceiverCommand+=" -"
+            for Receiver in options.get(CONF_RECEIVER_DISABLE) :
+                ReceiverCommand += " "+str(Receiver)
+
+        RepeaterCommand="REPEATER + *"
+        if options.get(CONF_REPEATER_DISABLE,None)!=None :
+            RepeaterCommand+=" -"
+            for Repeater in options.get(CONF_REPEATER_DISABLE) :
+                RepeaterCommand += " "+str(Repeater)
+
+        TraceCommand="TRACE - *"
+        if options.get(CONF_REPEATER_DISABLE,None)!=None :
+            TraceCommand+=" +"
+            for Trace in options.get(CONF_TRACE) :
+                TraceCommand += " "+str(Trace)
+
         connection = create_rfplayer_connection(
             port=config[CONF_DEVICE],
             event_callback=event_callback,
             disconnect_callback=reconnect,
             loop=hass.loop,
-            options={'START_COMMANDS':["1 FORMAT JSON . RECEIVER + *. SENSITIVITY L 0. SENSITIVITY H 0. SELECTIVITY L 0. SELECTIVITY H 0. RFLINK 1. RFLINKTRIGGER L 0. RFLINKTRIGGER H 0. LBT 16. STATUS JSON"]},
+        #     options={'START_COMMANDS':["1 FORMAT JSON . RECEIVER + *. SENSITIVITY L 0. SENSITIVITY H 0. SELECTIVITY L 0. SELECTIVITY H 0. RFLINK 1. RFLINKTRIGGER L 0. RFLINKTRIGGER H 0. LBT 16. STATUS JSON"]},
+        # )
+            options={'START_COMMANDS':[
+                            "FORMAT JSON",
+                            ReceiverCommand,
+                            RepeaterCommand,
+                            TraceCommand,
+                            "FREQ L 433920",
+                            "FREQ H 868350",
+                            "SELECTIVITY L 0",
+                            "SELECTIVITY H 0",
+                            "SENSITIVITY L 4",
+                            "SENSITIVITY H 4",
+                            "DSPTRIGGER L 8",
+                            "DSPTRIGGER H 6",
+                            "RFLINKTRIGGER L 10",
+                            "RFLINKTRIGGER H 18",
+                            "RFLINK 1",
+                            "LBT 16",
+                            "LEDACTIVITY 1",
+                            "STATUS JSON"
+                        ]
+            },
         )
+
         try:
             with async_timeout.timeout(CONNECTION_TIMEOUT):
                 transport, protocol = await connection
@@ -365,17 +392,11 @@ async def async_setup_entry(hass, entry):
 
     await connect()
     #if not await hass.data[DOMAIN][RFPLAYER_PROTOCOL].send_command_ack(
-   
-
     async_dispatcher_connect(hass, SIGNAL_EVENT, event_callback)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     #_LOGGER.debug(str(hass.data[DOMAIN][RFPLAYER_PROTOCOL]))
     hass.data[DOMAIN][RFPLAYER_PROTOCOL].init_commands()
-    
-    
-
-    
 
     return True
 
@@ -491,15 +512,6 @@ class RfplayerDevice(RestoreEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device registry information for this entity."""
-        
-        #_LOGGER.debug("-------Device Info-------:"+str(self.unique_id))
-        #_LOGGER.debug(self.unique_id)
-        #_LOGGER.debug(self.hass.data[DOMAIN])
-        """
-        _LOGGER.debug(self.platform)
-        _LOGGER.debug(self.protocol)
-        """
-
         return DeviceInfo(
             identifiers={
                 (
@@ -568,5 +580,4 @@ class RfplayerDevice(RestoreEntity):
         )
         if device:
             device_registry.async_remove_device(device)
-
 
