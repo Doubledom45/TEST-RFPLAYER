@@ -1,0 +1,12 @@
+{
+  "domain": "rfplayer",
+  "name": "TEST RFPlayer",
+  "documentation": "https://github.com/Doubledom45/TEST-RFPLAYER/tree/main/Information",
+  "issue_tracker": "https://github.com/Doubledom45/TEST-RFPLAYER/issues",
+  "config_flow": true,
+  "requirements": ["pyserial==3.5", "pyserial-asyncio==0.5"],
+  "codeowners": ["@Doubledom45", "@Crazymikefra"],
+  "dependencies": [],
+  "iot_class": "assumed_state",
+  "version": "1.2"
+}
