@@ -1,4 +1,6 @@
 # CHANGELOG
+## 1.3
+Rectification traduction, modification configuration auto
 ## 1.2
 MAJ en cours
 ## 1.1
