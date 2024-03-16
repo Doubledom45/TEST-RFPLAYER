@@ -31,7 +31,7 @@
             "conf_freq_h":"Bande de fréquence haute",
             "conf_freq_l":"Bande de fréquence basse",
             "conf_selectivity_h":"Selectivité signal sur bande haute de 0 à 5 [defaut 0]",
-            "conf_selectivity_l":"Felectivité signal sur bande basse de 0 à 5 [defaut 0]",
+            "conf_selectivity_l":"Selectivité signal sur bande basse de 0 à 5 [defaut 0]",
             "conf_sensitivity_h":"Sensibilité sur bande haute de 0 à 4 [defaut 0 ou 4]",
             "conf_sensitivity_l":"Sensibilité sur bande basse de 0 à 4 [defaut 0 ou 4]",
             "conf_dsptrigger_h":"Niveau activation DSP sur bande haute de 4 à 20 [defaut 6]",
