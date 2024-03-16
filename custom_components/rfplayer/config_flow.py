@@ -86,64 +86,49 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
             options = self.config_entry.options
             Init_Schema={
                         
-                        vol.Required(
-                            CONF_AUTOMATIC_ADD,
+                        vol.Required(CONF_AUTOMATIC_ADD,
                             default=options.get(CONF_AUTOMATIC_ADD, config.get(CONF_AUTOMATIC_ADD,True))
                         ): bool,
-                        vol.Required(
-                            CONF_FORMAT, 
+                        vol.Required(CONF_FORMAT, 
                             default=options.get(CONF_FORMAT, config.get(CONF_FORMAT,"JSON"))
-                        ): vol.In(["OFF", "BINARY", "HEXA", "HEXA_FIXED","TEXT","XML","JSON"]),
-                        vol.Required(
-                            CONF_FREQ_H, 
+                        ): vol.In(["JSON", "OFF", "BINARY", "HEXA", "HEXA_FIXED","TEXT","XML"]),
+                        vol.Required(CONF_FREQ_H, 
                             default=options.get(CONF_FREQ_H, config.get(CONF_FREQ_H,868350))
-                        ): vol.In(["0", "868950", "868350"]),
-                        vol.Required(
-                            CONF_FREQ_L, 
+                        ): vol.In([0, 868950, 868350]),
+                        vol.Required(CONF_FREQ_L, 
                             default=options.get(CONF_FREQ_L, config.get(CONF_FREQ_L,433920))
-                        ): vol.In(["0", "433420", "433920"]),
-                        vol.Required(
-                            CONF_SELECTIVITY_H, 
+                        ): vol.In([0, 433420, 433920]),
+                        vol.Required(CONF_SELECTIVITY_H, 
                             default=options.get(CONF_SELECTIVITY_H, config.get(CONF_SELECTIVITY_H,0))
-                        ): vol.In(["0", "1", "2", "3", "4", "5"]),
-                        vol.Required(
-                            CONF_SELECTIVITY_L, 
+                        ): vol.In([0, 1, 2, 3, 4, 5]),
+                        vol.Required(CONF_SELECTIVITY_L, 
                             default=options.get(CONF_SELECTIVITY_L, config.get(CONF_SELECTIVITY_L,0))
-                        ): vol.In(["0", "1", "2", "3", "4", "5"]),
-                        vol.Required(
-                            CONF_SENSITIVITY_H, 
+                        ): vol.In([0, 1, 2, 3, 4, 5]),
+                        vol.Required(CONF_SENSITIVITY_H, 
                             default=options.get(CONF_SENSITIVITY_H, config.get(CONF_SENSITIVITY_H,4))
-                        ): vol.In(["0", "1", "2", "3", "4", "5"]),
-                        vol.Required(
-                            CONF_SENSITIVITY_L, 
+                        ): vol.In([0, 1, 2, 3, 4, 5]),
+                        vol.Required(CONF_SENSITIVITY_L, 
                             default=options.get(CONF_SENSITIVITY_L, config.get(CONF_SENSITIVITY_L,4))
-                        ): vol.In(["0", "1", "2", "3", "4", "5"]),
-                        vol.Required(
-                            CONF_DSPTRIGGER_H, 
+                        ): vol.In([0, 1, 2, 3, 4, 5]),
+                        vol.Required(CONF_DSPTRIGGER_H, 
                             default=options.get(CONF_DSPTRIGGER_H, config.get(CONF_DSPTRIGGER_H,6))
                         ): int,
-                        vol.Required(
-                            CONF_DSPTRIGGER_L, 
+                        vol.Required(CONF_DSPTRIGGER_L, 
                             default=options.get(CONF_DSPTRIGGER_L, config.get(CONF_DSPTRIGGER_L,8))
                         ): int,
-                        vol.Required(
-                            CONF_RFLINK, 
+                        vol.Required(CONF_RFLINK, 
                             default=options.get(CONF_RFLINK, config.get(CONF_RFLINK,True))
                         ): bool,
-                        vol.Required(
-                            CONF_RFLINKTRIGGER_H, 
+                        vol.Required(CONF_RFLINKTRIGGER_H, 
                             default=options.get(CONF_RFLINKTRIGGER_H, config.get(CONF_RFLINKTRIGGER_H,10))
                         ): int,
-                        vol.Required(
-                            CONF_RFLINKTRIGGER_L, 
+                        vol.Required(CONF_RFLINKTRIGGER_L, 
                             default=options.get(CONF_RFLINKTRIGGER_L, config.get(CONF_RFLINKTRIGGER_L,12))
                         ): int,
-                        vol.Required(
-                            CONF_LBT, 
+                        vol.Required(CONF_LBT, 
                             default=options.get(CONF_LBT, config.get(CONF_LBT,16))
                         ): int,
-                        vol.Required(
-                            CONF_LEDACTIVITY, 
+                        vol.Required(CONF_LEDACTIVITY, 
                             default=options.get(CONF_LEDACTIVITY, config.get(CONF_LEDACTIVITY,True))
                         ): bool,
                         
