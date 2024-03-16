@@ -170,11 +170,11 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
             data[CONF_SENSITIVITY_L] = 4
             data[CONF_DSPTRIGGER_H] = 6
             data[CONF_DSPTRIGGER_L] = 8
-            data[CONF_RFLINK] = True
+            data[CONF_RFLINK] =True
             data[CONF_RFLINKTRIGGER_H] = 10
             data[CONF_RFLINKTRIGGER_L] = 12
             data[CONF_LBT] = 16
-            data[CONF_LEDACTIVITY] = True
+            data[CONF_LEDACTIVITY] =True
             data[CONF_RECEIVER_DISABLE] = ""
             data[CONF_REPEATER_DISABLE] = ""
             data[CONF_TRACE] = ""
