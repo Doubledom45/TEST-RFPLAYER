@@ -8,5 +8,5 @@
   "codeowners": ["@Doubledom45", "@Crazymikefra"],
   "dependencies": [],
   "iot_class": "assumed_state",
-  "version": "1.2"
+  "version": "1.3"
 }
