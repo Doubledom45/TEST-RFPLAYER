@@ -16,13 +16,28 @@ from homeassistant.core import callback
 
 
 
-from homeassistant.components.cover import CoverDeviceClass, CoverEntityFeature
-DEVICE_CLASS_GARAGE = CoverDeviceClass.GARAGE
-DEVICE_CLASS_SHUTTER = CoverDeviceClass.SHUTTER
-SUPPORT_OPEN = CoverEntityFeature.OPEN
-SUPPORT_CLOSE = CoverEntityFeature.CLOSE
-SUPPORT_SET_POSITION = CoverEntityFeature.SET_POSITION
-SUPPORT_STOP = CoverEntityFeature.STOP
+# from homeassistant.components.cover import CoverDeviceClass, CoverEntityFeature
+# DEVICE_CLASS_GARAGE = CoverDeviceClass.GARAGE
+# DEVICE_CLASS_SHUTTER = CoverDeviceClass.SHUTTER
+# SUPPORT_OPEN = CoverEntityFeature.OPEN
+# SUPPORT_CLOSE = CoverEntityFeature.CLOSE
+# SUPPORT_SET_POSITION = CoverEntityFeature.SET_POSITION
+# SUPPORT_STOP = CoverEntityFeature.STOP
+
+try:
+    from homeassistant.components.cover import CoverDeviceClass, CoverEntityFeature
+    DEVICE_CLASS_GARAGE = CoverDeviceClass.GARAGE
+    DEVICE_CLASS_SHUTTER = CoverDeviceClass.SHUTTER
+    SUPPORT_OPEN = CoverEntityFeature.OPEN
+    SUPPORT_CLOSE = CoverEntityFeature.CLOSE
+    SUPPORT_SET_POSITION = CoverEntityFeature.SET_POSITION
+    SUPPORT_STOP = CoverEntityFeature.STOP
+except:# fallback (pre 2022.5)
+    from homeassistant.components.cover import (
+        DEVICE_CLASS_GARAGE, DEVICE_CLASS_SHUTTER,
+        SUPPORT_OPEN, SUPPORT_CLOSE,
+        SUPPORT_SET_POSITION, SUPPORT_STOP,
+    )
 
 
 from homeassistant.helpers import config_validation as cv, entity_platform, service

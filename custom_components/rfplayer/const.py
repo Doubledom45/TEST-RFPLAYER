@@ -44,7 +44,7 @@ LIST_CONF_COMMANDS=[
 
 CONF_RECONNECT_INTERVAL = "reconnect_interval"
 
-DEFAULT_RECONNECT_INTERVAL = 10
+DEFAULT_RECONNECT_INTERVAL = 1
 DEFAULT_SIGNAL_REPETITIONS = 1
 
 PLATFORMS = ["sensor", "switch", "number","cover"]
@@ -58,9 +58,8 @@ CONF_FIRE_EVENT = "fire_event"
 CONF_IGNORE_DEVICES = "ignore_devices"
 CONF_SIGNAL_REPETITIONS = "signal_repetitions"
 CONF_ENTITY_TYPE = "entity_type"
-CONF_ENTITY_TODELETE = "entity_todelete"
-CONF_ID = "id"
 CONF_PLATFORM = "platform"
+CONF_POURCENT_DIM = "pourcent_dim"
 
 DATA_DEVICE_REGISTER = "device_register"
 DATA_ENTITY_LOOKUP = "entity_lookup"
@@ -79,7 +78,6 @@ RFPLAYER_GROUP_COMMANDS = ["allon", "alloff"]
 
 SERVICE_SEND_COMMAND = "send_command"
 SERVICE_SEND_RAW_COMMAND = "send_raw_command"
-SERVICE_REMOVE_ENTITY = "remove_entity"
 SERVICE_TEST_FRAME = "test_frame"
 
 SIGNAL_AVAILABILITY = "rfplayer_device_available"

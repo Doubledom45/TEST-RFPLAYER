@@ -49,7 +49,7 @@ SEND_COMMAND_SCHEMA = vol.Schema(
         vol.Optional(CONF_DEVICE_ID): cv.string,
         vol.Required(CONF_AUTOMATIC_ADD, default=False): cv.boolean,
         vol.Optional(CONF_ENTITY_TYPE): cv.string,
-        vol.Optional(CONF_ENTITY_TODELETE): cv.string,
+        vol.Optional(CONF_POURCENT_DIM): cv.string,     
     }
 )
 
@@ -65,13 +65,7 @@ TEST_FRAME_SCHEMA = vol.Schema(
     }
 )
 
-TEST_REMOVE_ENTITY_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_ID): cv.entity_id,
-    }
-)
-
-TMP_ENTITY = "tmp.{}"
+# TMP_ENTITY = "tmp.{}"
 
 
 def identify_event_type(event):
@@ -149,70 +143,6 @@ async def async_setup_entry(hass, entry):
             call.data['frame']
         )
 
-    async def async_test_remove_entity(call):
-        #TODO:Trouver comment supprimer une entité
-        """Remove an entity."""
-        _LOGGER.debug("Removing entity %s",call.data[CONF_ID])
-        ThisEntries=hass.config_entries.async_entries()
-        _LOGGER.debug("Entries %s",str(ThisEntries))
-        ThisEntry=hass.config_entries.async_get_entry(call.data[CONF_ID])
-        _LOGGER.debug("Entity = %s",ThisEntry) #[CONF_DEVICES][call.data[CONF_ID]]
-
-        """
-        for entry in ThisEntries:
-            if entry.domain == DOMAIN :
-                _LOGGER.debug("-----------------------") 
-                _LOGGER.debug("Entry item = %s",entry) 
-                for attr in dir(entry):
-                    if attr[0]!="_" :
-                        try:
-                            attribval=getattr(entry, attr)
-                        except:
-                            attribval="N/A"
-                        _LOGGER.debug("entry.%s = %s" ,attr,attribval)
-        """
-        entitydomain=call.data[CONF_ID].split(".")[0]
-
-        #_LOGGER.debug(hass.data[DOMAIN])
-        #_LOGGER.debug(hass.options[DOMAIN])
-        #_LOGGER.debug(hass.data[DOMAIN][DATA_ENTITY_LOOKUP][entitydomain])
-        
-        entrytodelete=""
-        for entity,id in hass.data[DOMAIN][DATA_ENTITY_LOOKUP][entitydomain].items() :
-            if id==call.data[CONF_ID]:
-                entrytodelete=entity
-        
-        if entrytodelete!="":
-            _LOGGER.debug("Trying to Detele %s from %s",entrytodelete,entitydomain)
-            hass.data[DOMAIN][DATA_ENTITY_LOOKUP][entitydomain].pop(entrytodelete)
-
-        #await super().async_will_remove_from_hass()
-        """
-        device_registry = await async_get_registry(hass)
-        device = device_registry.async_get_device(
-            (DOMAIN, hass.data[DOMAIN]
-             [CONF_DEVICE] + "_" + self._attr_unique_id)
-        )
-        if device:
-            device_registry.async_remove_device(device)
-        """
-        
-        #Manipuler entry.options et entry.data pour effectuer le pop
-        #Appliquer un flag pour qu'il ne soit pas recréé au boot suivant et désactiver
-        
-        """
-        try:
-            await hass.config_entries.async_unload(call.data[CONF_ID])
-            await hass.config_entries.async_remove(call.data[CONF_ID])
-        except Exception as err:
-            _LOGGER.debug(Exception,err)
-        """
-        """
-        hass.data[DOMAIN][RFPLAYER_PROTOCOL].handle_raw_packet(
-            call.data['frame']
-        )
-        """
-    
 
     hass.services.async_register(
         DOMAIN, SERVICE_SEND_COMMAND, async_send_command, schema=SEND_COMMAND_SCHEMA
@@ -226,17 +156,11 @@ async def async_setup_entry(hass, entry):
         DOMAIN, SERVICE_TEST_FRAME, async_test_frame, schema=TEST_FRAME_SCHEMA
     )
 
-    hass.services.async_register(
-        DOMAIN, SERVICE_REMOVE_ENTITY, async_remove_entry, schema=TEST_REMOVE_ENTITY_SCHEMA
-    )
-
-    
 
     @callback
     def event_callback(event):
 
         event_type = identify_event_type(event)
-        # _LOGGER.debug("event of type %s: %s", event_type, event)
 
         # Don't propagate non entity events (eg: version string, ack response)
         if event_type not in hass.data[DOMAIN][DATA_ENTITY_LOOKUP]:
@@ -245,7 +169,7 @@ async def async_setup_entry(hass, entry):
 
         # Lookup entities who registered this device id as device id or alias
         event_id = event.get(EVENT_KEY_ID)
-        #_LOGGER.debug("List of entities : %s",str(hass.data[DOMAIN]))
+
         entity_id = hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id]
 
         if entity_id:
@@ -256,9 +180,6 @@ async def async_setup_entry(hass, entry):
             if event_type in hass.data[DOMAIN][DATA_DEVICE_REGISTER]:
                 
                 _LOGGER.debug("device_id not known, adding new device")
-                # _LOGGER.debug("event_type: %s",str(event_type))
-                # _LOGGER.debug("event_id: %s",str(event_id))
-                # _LOGGER.debug("event: %s",str(event))
 
                 hass.data[DOMAIN][DATA_ENTITY_LOOKUP][event_type][event_id] = event
                 _add_device_to_base_config(event, event_id)
@@ -320,8 +241,7 @@ async def async_setup_entry(hass, entry):
             event_callback=event_callback,
             disconnect_callback=reconnect,
             loop=hass.loop,
-        #     options={'START_COMMANDS':["1 FORMAT JSON . RECEIVER + *. SENSITIVITY L 0. SENSITIVITY H 0. SELECTIVITY L 0. SELECTIVITY H 0. RFLINK 1. RFLINKTRIGGER L 0. RFLINKTRIGGER H 0. LBT 16. STATUS JSON"]},
-        # )
+
             options={'START_COMMANDS':[
                             "FORMAT "+str(options.get(CONF_FORMAT,"JSON")),
                             ReceiverCommand,
@@ -395,7 +315,6 @@ async def async_setup_entry(hass, entry):
     async_dispatcher_connect(hass, SIGNAL_EVENT, event_callback)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    #_LOGGER.debug(str(hass.data[DOMAIN][RFPLAYER_PROTOCOL]))
     hass.data[DOMAIN][RFPLAYER_PROTOCOL].init_commands()
 
     return True
@@ -406,30 +325,13 @@ async def async_unload_entry(hass, entry):
     await hass.config_entries.async_forward_entry_unload(entry, "sensor")
     await hass.config_entries.async_forward_entry_unload(entry, "cover")
     await hass.config_entries.async_forward_entry_unload(entry, "command")
+    await hass.config_entries.async_forward_entry_unload(entry, "switch")
+    await hass.config_entries.async_forward_entry_unload(entry, "number")
     hass
-    #await hass.config_entries.async_unload_platforms(entry, "sensor")
-    return True
+    return None
     
-
-async def async_remove_entry(hass, entry) -> None:
-    """Handle removal of an entry."""
-    _LOGGER.debug("Removing %s",str(entry))
-    try:
-        await hass.config_entries.async_forward_entry_unload(entry, "sensor")
-        _LOGGER.info("Successfully removed sensor from the integration")
-    except ValueError:
-        pass
-
-async def async_remove_config_entry_device(
-    hass, config_entry, device_entry
-) -> bool:
-    return True
-    """Remove a config entry from a device."""
-    
-
 class RfplayerDevice(RestoreEntity):
     """Representation of a Rfplayer device.
-
     Contains the common logic for Rfplayer entities.
     """
 
@@ -447,7 +349,6 @@ class RfplayerDevice(RestoreEntity):
         name=None,
     ):
         """Initialize the device."""
-        # Rflink specific attributes for every component type
         self._initial_event = initial_event
         self._protocol = protocol
         self._attr_protocol = protocol
@@ -456,7 +357,7 @@ class RfplayerDevice(RestoreEntity):
         self._event = None
         self._state: bool = None
         self._attr_assumed_state = True
-        
+
         if name is not None:
             self._attr_name = name
             self._attr_unique_id = slugify(f"{protocol}_{name}")
@@ -478,7 +379,6 @@ class RfplayerDevice(RestoreEntity):
         await rfplayer.han(
             frame=frame,
         )
-        
 
     @callback
     def handle_event_callback(self, event):
@@ -531,12 +431,12 @@ class RfplayerDevice(RestoreEntity):
     def available(self):
         """Return True if entity is available."""
         return bool(self._protocol)
-    
+
     @property
     def protocol(self):
         """Return value."""
         return self._attr_protocol
-    
+
     @property
     def ledactive(self):
         """Return value."""
@@ -551,7 +451,7 @@ class RfplayerDevice(RestoreEntity):
     async def async_added_to_hass(self):
         """Register update callback."""
         await super().async_added_to_hass()
-        
+
         self.async_on_remove(
             async_dispatcher_connect(
                 self.hass, SIGNAL_AVAILABILITY, self._availability_callback
@@ -568,16 +468,3 @@ class RfplayerDevice(RestoreEntity):
         # Process the initial event now that the entity is created
         if self._initial_event:
             self.handle_event_callback(self._initial_event)
-
-    async def async_will_remove_from_hass(self):
-        """Clean when entity removed."""
-        await super().async_will_remove_from_hass()
-##        device_registry = await async_get_registry(self.hass)
-        device_registry = dr.async_get(hass)
-        device = device_registry.async_get_device(
-            (DOMAIN, self.hass.data[DOMAIN]
-             [CONF_DEVICE] + "_" + self._attr_unique_id)
-        )
-        if device:
-            device_registry.async_remove_device(device)
-

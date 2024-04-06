@@ -48,22 +48,14 @@ class ProtocolBase(asyncio.Protocol):
     def connection_made(self, transport: asyncio.BaseTransport) -> None:
         """Just logging for now."""
         self.transport = transport
-        #self.send_raw_packet("ZIA++HELLO")
-        #for command in self.options.get('START_COMMANDS',[]):
-        #    self.send_raw_packet("ZIA++"+command)
-        
-        
-        #log.debug("initialized")
-    
+        # self.send_raw_packet("ZIA++HELLO")
+
     def init_commands(self) -> None:
         """Just logging for now."""
         #self.transport = transport
-        self.send_raw_packet("ZIA++HELLO")
+        self.send_raw_packet("ZIA++HELLO. PING")
         for command in self.options.get('START_COMMANDS',[]):
             self.send_raw_packet("ZIA++"+command)
-        
-        
-        #log.debug("initialized")
 
     def data_received(self, data: bytes) -> None:
         """Add incoming data to buffer."""
@@ -116,11 +108,9 @@ class PacketHandling(ProtocolBase):
         **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization.
-
         packet_callback: called with every complete/valid packet
         received.
         """
-        #log.debug("PacketHandling")
         super().__init__(*args, **kwargs)
         self.options = options
         if packet_callback:
@@ -137,22 +127,20 @@ class PacketHandling(ProtocolBase):
         if packets:
             for packet in packets:
                 if packet != None:
-                    #log.debug("decoded packet: %s", packet)
                     if "ok" in packet:
                         # handle response packets internally
                         log.debug("command response: %s", packet)
                         self.handle_response_packet(packet)
                     else:
-                        #log.debug("handle packet: %s", packet)
+                        log.debug("handle packet: %s", packet)
                         self.handle_packet(packet)
         else:
-            log.warning("no valid packet")
+            log.warning("no valid packet, ou ZIA66 = Retour Info")
 
     def handle_packet(self, packet: PacketType) -> None:
         """Process incoming packet dict and optionally call callback."""
         if self.packet_callback:
             # forward to callback
-            #log.debug("forwarding packet: %s to %s", packet,self.packet_callback.__module__+"/"+self.packet_callback.__name__)
             self.packet_callback(packet)
         else:
             log.debug("packet with no callback %s", packet)
@@ -174,20 +162,22 @@ class PacketHandling(ProtocolBase):
         device_id: str = None,
     ) -> None:
         """Send device command to rfplayer gateway."""
-        if device_id is not None:
-            if protocol == "EDISIOFRAME" :
+
+        if device_id is not None and device_address is None:
+            if protocol == "EDISIOFRAME" : # le device_id contient la cde
                 self.send_raw_packet(f"ZIA++{protocol} {device_id}")
             else :
-                self.send_raw_packet(f"ZIA++{command} {protocol} ID {device_id}")
+                self.send_raw_packet(f"ZIA++{command} ID {device_id} {protocol}")
         elif device_address is not None:
-            DIM_ADDON=""
-            if command == "DIM" :
-                DIM_ADDON="%50"
-            self.send_raw_packet(f"ZIA++{command} {protocol} {device_address} {DIM_ADDON}")
-        elif protocol == "EDISIOFRAME":
-            self.send_raw_packet(f"ZIA++{command}")
+            if command == "DIM":
+                if device_id is None: #sinon le device_id devient le % du DIM
+                    if protocol == "RTS" or protocol == "X2DSHUTTER":
+                        DIM_ADDON="%4"
+                        self.send_raw_packet(f"ZIA++{command} {protocol} {device_address} {DIM_ADDON}")
+                else:
+                    self.send_raw_packet(f"ZIA++{command} {device_address} {protocol} %{device_id} ") #le device_id devient le % du DIM
         else:
-            self.send_raw_packet(f"ZIA++{protocol} {command}")
+            self.send_raw_packet(f"ZIA++{command}")
 
     def send_raw_command(
         self,
@@ -206,7 +196,6 @@ class CommandSerialization(PacketHandling):
         **kwargs: Any,
     ) -> None:
         """Add packethandling specific initialization."""
-        #log.debug("CommandSerialization")
         super().__init__(*args, **kwargs)
         self.options = options
         if packet_callback:
@@ -216,7 +205,6 @@ class CommandSerialization(PacketHandling):
 
     def handle_response_packet(self, packet: PacketType) -> None:
         """Handle response packet."""
-        #log.debug("handle_response_packet")
         self._last_ack = packet
         self._event.set()
 
@@ -281,17 +269,14 @@ class EventHandling(PacketHandling):
     def _handle_packet(self, packet: PacketType) -> None:
         """Event specific packet handling logic."""
         events = packet_events(packet)
-
         for event in events:
             if self.ignore_event(event["id"]):
                 log.debug("ignoring event with id: %s", event)
                 continue
-            #log.debug("got event: %s", event)
+            log.debug("got event: %s", event)
             if self.event_callback:
-                #log.debug("forwarding event to: %s",self.event_callback.__module__+"/"+self.event_callback.__name__)
                 self.event_callback(event)
             else:
-                log.debug("Event handled locally")
                 self.handle_event(event)
 
     def handle_event(self, event: PacketType) -> None:

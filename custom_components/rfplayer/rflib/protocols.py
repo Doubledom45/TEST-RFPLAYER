@@ -50,8 +50,8 @@ def header_decode(header:dict):
     frameType			0 : Regular Decoder, 1 : RF Frames
 	cluster				Reserved
 	dataFlag			0 : 433 Mhz, 1 : 868 Mhz
-	rfLevel				Signal Level : Affaiblissement en dB (-40=Haut, -110=Faible)
-	floorNoise			Signal Level : Affaiblissement en dB (-40=Haut, -110=Faible)
+	rfLevel				Signal Level : Affaiblissement en dB (-70/40=Haut, -110=Faible)
+	floorNoise			Signal Level : Affaiblissement en dB (-70/40=Haut, -110=Faible)
 	rfQuality			Signal Quality note over 10
 	protocol			Protocol Number
 	protocolMeaning		Protocol Name
@@ -62,6 +62,32 @@ def header_decode(header:dict):
         headers_found[element]= header.get(element)
     headers_found['protocol']=header.get('protocolMeaning')
     return headers_found
+
+#Retour EDISIOFRAME
+def EDISIOFRAME_decode(data:list,message:list,node) -> list:
+    if protocols_debug: log.debug("Decode Edisioframe")
+    if protocols_debug: log.debug("data:%s",str(data))
+    if protocols_debug: log.debug("message:%s",str(message))
+    decoded_items = cast(PacketType, {"node": node})
+    decoded_items["protocol"] = "RETOUR"
+    decoded_items["platform"] = "sensor"
+    decoded_items["id"] = "SysInfo"
+    decoded_items["debug"] = str(message)
+
+    return decoded_items
+
+#Retour du PING => PONG
+def PONG_decode(data:list,message:list,node) -> list:
+    if protocols_debug: log.debug("Decode PONG")
+    if protocols_debug: log.debug("data:%s",str(data))
+    if protocols_debug: log.debug("message:%s",str(message))
+    decoded_items = cast(PacketType, {"node": node})
+    decoded_items["protocol"] = "REPONSE_PING"
+    decoded_items["platform"] = "sensor"
+    decoded_items["id"] = "SysInfo"
+    decoded_items["debug"] = str(message)
+
+    return decoded_items
 
 #WELCOME
 def WELCOME_decode(data:list,message:list,node) -> list:

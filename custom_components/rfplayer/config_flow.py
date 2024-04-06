@@ -79,6 +79,7 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
 
     async def async_step_init(self, user_input: dict = None):
+    # async def async_step_user(self, user_input: dict | None = None) -> FlowResult:        
         """Manage the options."""
         log.debug("Init:%s",user_input)
         if user_input is None:
@@ -153,34 +154,29 @@ class RfPlayerOptionsFlowHandler(config_entries.OptionsFlow):
                 },
             })
 
-            return self.async_show_form(
-                step_id="init",
-                data_schema=vol.Schema(Init_Schema),
-            )
+            return self.async_show_form(step_id="init", data_schema=vol.Schema(Init_Schema),)
 
-        else:
-            data = self.config_entry.data.copy()
-            data[CONF_AUTOMATIC_ADD] =True
-            data[CONF_FORMAT] = "JSON"
-            data[CONF_FREQ_H] = 868350
-            data[CONF_FREQ_L] = 433920
-            data[CONF_SELECTIVITY_H] = 0
-            data[CONF_SELECTIVITY_L] = 0
-            data[CONF_SENSITIVITY_H] = 4
-            data[CONF_SENSITIVITY_L] = 4
-            data[CONF_DSPTRIGGER_H] = 6
-            data[CONF_DSPTRIGGER_L] = 8
-            data[CONF_RFLINK] =True
-            data[CONF_RFLINKTRIGGER_H] = 10
-            data[CONF_RFLINKTRIGGER_L] = 12
-            data[CONF_LBT] = 16
-            data[CONF_LEDACTIVITY] =True
-            data[CONF_RECEIVER_DISABLE] = ""
-            data[CONF_REPEATER_DISABLE] = ""
-            data[CONF_TRACE] = ""
-            return self.async_create_entry(title=data[CONF_DEVICE], data=data)
-
-
+## REPRISE DE LA CONFIGURATION SI MODIFICATION PAR USER SAUVEGARDE AU REBOOT ##
+        data = self.config_entry.data.copy()
+        data[CONF_AUTOMATIC_ADD] = user_input.get(CONF_AUTOMATIC_ADD,False)
+        data[CONF_FORMAT] = user_input.get(CONF_FORMAT,"JSON")
+        data[CONF_FREQ_H] = user_input.get(CONF_FREQ_H,0)
+        data[CONF_FREQ_L] = user_input.get(CONF_FREQ_L,0)
+        data[CONF_SELECTIVITY_H] = user_input.get(CONF_SELECTIVITY_H,0)
+        data[CONF_SELECTIVITY_L] = user_input.get(CONF_SELECTIVITY_L,0)
+        data[CONF_SENSITIVITY_H] = user_input.get(CONF_SENSITIVITY_H,4)
+        data[CONF_SENSITIVITY_L] = user_input.get(CONF_SENSITIVITY_L,4)
+        data[CONF_DSPTRIGGER_H] = user_input.get(CONF_DSPTRIGGER_H,6)
+        data[CONF_DSPTRIGGER_L] = user_input.get(CONF_DSPTRIGGER_L,8)
+        data[CONF_RFLINK] = user_input.get(CONF_RFLINK,1)
+        data[CONF_RFLINKTRIGGER_H] = user_input.get(CONF_RFLINKTRIGGER_H,10)
+        data[CONF_RFLINKTRIGGER_L] = user_input.get(CONF_RFLINKTRIGGER_L,12)
+        data[CONF_LBT] = user_input.get(CONF_LBT,16)
+        data[CONF_LEDACTIVITY] = user_input.get(CONF_LEDACTIVITY,1)
+        data[CONF_RECEIVER_DISABLE] = user_input.get(CONF_RECEIVER_DISABLE,"")
+        data[CONF_REPEATER_DISABLE] = user_input.get(CONF_REPEATER_DISABLE,"")
+        data[CONF_TRACE] = user_input.get(CONF_TRACE,"")
+        return self.async_create_entry(title=data[CONF_DEVICE], data=data)
 
 class CannotConnect(exceptions.HomeAssistantError):
     """Error to indicate we cannot connect."""

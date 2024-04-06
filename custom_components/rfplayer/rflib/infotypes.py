@@ -52,19 +52,6 @@ def infoType_0_decode(infos:list,allowEmptyID:bool=False) -> list:
 def infoType_1_decode(infos:list,allowEmptyID:bool=False) -> list:
     if infotypes_debug: log.debug("Decode InfoType 1")
     fields_found = {}
-    """
-    match infos["subType"]:
-        case 0 :
-            fields_found["subType"]="OFF"
-        case 1 :
-            fields_found["subType"]="ON"
-        case 4 :
-            fields_found["subType"]="ALL_OFF"
-        case 5 :
-            fields_found["subType"]="ALL_ON"
-        case _ :
-            fields_found["subType"]=infos["subType"]
-    """
 
     fields_found["subType"]=infos.get("subTypeMeaning")
     if fields_found["subType"] == None or fields_found["subType"] == "" : fields_found["subType"]=infos.get("subType")
@@ -351,6 +338,7 @@ def infoType_11_decode(infos:list,allowEmptyID:bool=False) -> list:
 
     if 'flags' in infos['qualifierMeaning']:
         for flag in infos['qualifierMeaning']['flags']:
+            if fields_found["subType"] == "Detector/Sensor" : fields_found["flags"]=flag
             fields_found[flag]=1
 
     fields_found["id"]=infos["id"]

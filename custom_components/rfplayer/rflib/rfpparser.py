@@ -48,6 +48,9 @@ PACKET_FIELDS = {
     "d1":"d1",
     "d2":"d2",
     "d3":"d3",
+    "d4":"d4",
+    "flag":"flags",
+    "qua":"qualifier",
     "typ":"subType",
     "dbg":"debug",
     #Pour EDISIO 868
@@ -113,6 +116,7 @@ PACKET_HEADER_RE = (
         [
             "ZIA--",  # command reply
             "ZIA33",  # json reply
+            "ZIA66",  # Retour EDISIOFRAME HEXA
         ]
     )
     + ")"
@@ -152,10 +156,10 @@ def decode_packet(packet: str) -> list:
                 protocol="WELCOME"
                 message=frame
                 packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
-            elif frame.startswith('ZIA--'):
-                protocol="Status"
-                message= frame
-                packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
+            elif frame.startswith('PONG'):
+                protocol="PONG"
+                message=frame
+                packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))                
             elif frame.startswith('RECEIVED'):
                 protocol="RECEIVED"
                 message=frame
@@ -169,10 +173,6 @@ def decode_packet(packet: str) -> list:
                 for protocol in message:
                     packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
 
-            
-            #packets_found.append(globals()["_".join([data["protocol"],"decode"])](data,message,PacketHeader.gateway.name))
-            #return [data]
-        
         case "ZIA33":
             # Protocols
             message = json.loads(packet.replace("ZIA33", ""))["frame"]
@@ -185,10 +185,19 @@ def decode_packet(packet: str) -> list:
                 log.error("Protocol %s not implemented : %s", str(data["protocol"]),str(e))
                 log.debug("Trace : %s",traceback.format_exc())
                 log.debug("Message : %s", str(message))
-        
-    #if packets_found==[None]:
-    #    log.error("No packets found in %s", str(message))
-    #log.debug("Packets Found : %s", str(packets_found))
+
+        case "ZIA66":
+            #Retour EDISIOFRAME
+            frame=packet.replace("ZIA66 ", "")
+            if frame.startswith('EDISIOFRAME'):
+                message= frame
+                protocol="EDISIOFRAME"
+                packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
+            else:
+                message = json.loads(frame)
+                for protocol in message:
+                    packets_found.append(globals()["_".join([protocol,"decode"])](data,message,PacketHeader.gateway.name))
+
     return packets_found
 
 def encode_packet(packet: PacketType) -> str:
@@ -200,7 +209,6 @@ def encode_packet(packet: PacketType) -> str:
     if "address" in packet:
         return f"ZIA++{command} {protocol} {packet['address']}"
     raise Exception("No ID or Address found")
-
 
 def serialize_packet_id(packet: PacketType) -> str:
     """Serialize packet identifiers into one reversible string."""
@@ -215,7 +223,6 @@ def serialize_packet_id(packet: PacketType) -> str:
             ],
         )
     )
-
 
 def deserialize_packet_id(packet_id: str) -> Dict[str, str]:
     """Deserialize packet id."""
@@ -275,12 +282,12 @@ def packet_events(packet: PacketType) -> Generator[PacketType, None, None]:
     for sensor, value in events.items():
         #log.debug("packet_events, sensor:%s,value:%s", sensor, value)
         unit = packet.get(sensor + "_unit", None)
-        
+
         if forceid==None:
             id=packet_id + field_abbrev[sensor] + PACKET_ID_SEP + field_abbrev[sensor]
         else :
             id=forceid
-            
+
         yield {
             "id": id,
             sensor: value,
@@ -294,12 +301,12 @@ def packet_events(packet: PacketType) -> Generator[PacketType, None, None]:
         for sensor, value in packet.get('elements').items():
             log.debug("packet_events, sensor:%s,value:%s", sensor, value)
             unit = packet.get("sensor" + "_unit", None)
-            
+
             if forceid==None:
                 id=packet_id + value.get("protocol","unknown") + PACKET_ID_SEP + sensor
             else :
                 id=forceid
-                
+
             yield {
                 "id": id,
                 "sensor": "sensor",
@@ -308,5 +315,3 @@ def packet_events(packet: PacketType) -> Generator[PacketType, None, None]:
                 "platform": value.get("platform","unknown"),
                 "protocol": value.get("protocol","unknown")
             }
-
-
