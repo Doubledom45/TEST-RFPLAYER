@@ -176,6 +176,8 @@ class PacketHandling(ProtocolBase):
                         self.send_raw_packet(f"ZIA++{command} {protocol} {device_address} {DIM_ADDON}")
                 else:
                     self.send_raw_packet(f"ZIA++{command} {device_address} {protocol} %{device_id} ") #le device_id devient le % du DIM
+            else:
+                self.send_raw_packet(f"ZIA++{command} {device_address} {protocol}")
         else:
             self.send_raw_packet(f"ZIA++{command}")
 
