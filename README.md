@@ -1,10 +1,10 @@
 # ATTENTION FAIRE UNE SAUVEGARDE AVANT INSTALLATION
 
-# HA-2024.3-RFPLAYER
+# HA-2025.11-RFPLAYER
 						## NEW Version RFPLAYER EN HA 2024.3
 # 🔎 Voir Lisez_moi.md en Français
 		Pour installation👁‍🗨 👇
-  ([HA-2024.3-RFPLAYER](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/blob/main/Lisez_moi.md))
+  ([HA-2025.11-RFPLAYER](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/blob/main/Lisez_moi.md))
 
 # Pour l'API voir la doc dans Information
 
