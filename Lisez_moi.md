@@ -1,3 +1,5 @@
+## ATTENTION LE NOM FAIT TOUJOURS REFERENCE HA 2024.3 
+## MAIS BIEN 2025.11
 # Installation depuis HACS
 ![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/3d8e74d2-a082-4b4c-be07-954da581b881)
 
