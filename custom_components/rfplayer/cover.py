@@ -1,28 +1,15 @@
-"""Support for Rfplayer cover (V2)."""
+"""Support for Rfplayer cover ."""
 import logging
 
 
 from homeassistant.components.cover import (
     DOMAIN as PLATFORM_COVER,
-    CoverEntity,
-    ATTR_POSITION, ATTR_CURRENT_POSITION,
-    STATE_OPEN, STATE_OPENING, STATE_CLOSED, STATE_CLOSING
-)
+    CoverEntity, CoverState)
 
 
 from homeassistant.const import CONF_DEVICE_ID, CONF_DEVICES, CONF_PROTOCOL
 #from homeassistant.helpers.entity import EntityCategory
 from homeassistant.core import callback
-
-
-
-# from homeassistant.components.cover import CoverDeviceClass, CoverEntityFeature
-# DEVICE_CLASS_GARAGE = CoverDeviceClass.GARAGE
-# DEVICE_CLASS_SHUTTER = CoverDeviceClass.SHUTTER
-# SUPPORT_OPEN = CoverEntityFeature.OPEN
-# SUPPORT_CLOSE = CoverEntityFeature.CLOSE
-# SUPPORT_SET_POSITION = CoverEntityFeature.SET_POSITION
-# SUPPORT_STOP = CoverEntityFeature.STOP
 
 try:
     from homeassistant.components.cover import CoverDeviceClass, CoverEntityFeature
@@ -67,14 +54,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    #_LOGGER.debug("Add cover entity - hass : %s", str(hass))
-    #_LOGGER.debug("Add cover entity - entry : %s", str(entry))
-    #_LOGGER.debug("Add cover entity - async_add_entities : %s", str(async_add_entities))
-    """Set up the Rfplayer platform."""
     config = entry.data
     options = entry.options
-    #_LOGGER.debug("config : %s",str(config))
-    #_LOGGER.debug("options : %s",str(options))
 
     platform = entity_platform.current_platform.get()
     
@@ -89,17 +70,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
     async def add_new_device(device_info):
-        #if device_info.get(CONF_ENTITY_TYPE) == ENTITY_TYPE_COVER or device_info.get(CONF_ENTITY_TYPE) == "":
+
         """Check if cover device is known, otherwise create device entity."""
-        #if(((device_info.get("protocol")!=None) and ((device_info.get("device_id")!=None) or (device_info.get("device_address")!=None))) or True):
-        
-        # create entity
         
         _LOGGER.debug("Add cover entity %s", str(device_info))
-        #_LOGGER.debug("Add cover entity - protocol %s", str(device_info[CONF_PROTOCOL]))
-        #_LOGGER.debug("Add cover entity - device_address %s", str(device_info.get(CONF_DEVICE_ADDRESS)))
-        #_LOGGER.debug("Add cover entity - device_id %s", str(device_info.get(CONF_DEVICE_ID)))
-        #_LOGGER.debug("Add cover entity - initial_event %s", str(device_info))
 
         try:
             
@@ -111,8 +85,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     device_address=device_info.get(CONF_DEVICE_ADDRESS),
                     device_id=device_info.get(CONF_DEVICE_ID),
                     initial_event=device_info,
-                    #device_class=DEVICE_CLASS_SHUTTER
-                )
+                 )
             else:
                 _LOGGER.debug("Create from event")
                 device_id = device_info[EVENT_KEY_ID]
@@ -121,7 +94,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
                     device_address=device_info.get(CONF_DEVICE_ADDRESS),
                     device_id=device_id.split("_")[1],
                     initial_event=device_info,
-                    # device_class=DEVICE_CLASS_SHUTTER
                 )
             async_add_entities([device])
         except :
@@ -175,11 +147,11 @@ class RfplayerCover(RfplayerDevice, CoverEntity):
         else:
             command = event["cover"]
         if command in [COMMAND_UP,COMMAND_ON]:
-            self._attr_state = STATE_OPEN
+            self._attr_state = CoverState.OPEN
         elif command in [COMMAND_DOWN,COMMAND_OFF]:
-            self._attr_state = STATE_CLOSED
+            self._attr_state = CoverState.CLOSED
         elif command in [COMMAND_MY]:
-            self._attr_state = STATE_OPEN
+            self._attr_state = CoverState.OPEN
         self.schedule_update_ha_state()
 
     @property
@@ -189,23 +161,23 @@ class RfplayerCover(RfplayerDevice, CoverEntity):
     @property
     def is_opening(self):
         #_LOGGER.debug("Test is opening : %s", str(self))
-        return self._attr_state == STATE_OPENING
+        return self._attr_state == CoverState.OPENING
 
     @property
     def is_closing(self):
         #_LOGGER.debug("Test is closing : %s", str(self))
-        return self._attr_state == STATE_CLOSING
+        return self._attr_state == CoverState.CLOSING
 
     @property
     def is_closed(self):
         #_LOGGER.debug("Test is closed : %s", str(self))
-        return self._attr_state == STATE_CLOSED
+        return self._attr_state == CoverState.CLOSED
 
     async def async_open_cover(self, **kwargs) :
         _LOGGER.debug("Open cover : %s", str(self))
         """Turn the device on."""
         await self._async_send_command(COMMAND_ON)
-        self._attr_state=STATE_OPEN
+        self._attr_state=CoverState.OPEN
         self.async_schedule_update_ha_state()
 
 
@@ -213,12 +185,12 @@ class RfplayerCover(RfplayerDevice, CoverEntity):
         _LOGGER.debug("Close cover : %s", str(self))
         """Turn the device off."""
         await self._async_send_command(COMMAND_OFF)
-        self._attr_state=STATE_CLOSED
+        self._attr_state=CoverState.CLOSED
         self.async_schedule_update_ha_state(False)
 
     async def async_stop_cover(self, **kwargs):
         _LOGGER.debug("Stop cover : %s", str(self))
         await self._async_send_command(COMMAND_DIM)
-        self._attr_state=STATE_OPEN
+        self._attr_state=CoverState.OPEN
         self.async_schedule_update_ha_state(False)
         
