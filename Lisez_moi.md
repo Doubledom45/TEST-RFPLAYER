@@ -1,11 +1,9 @@
-## ATTENTION LE NOM FAIT TOUJOURS REFERENCE HA 2024.3 
-## MAIS BIEN 2025.11
+## ATTENTION VERSION 2025.11
 # Installation depuis HACS
-![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/3d8e74d2-a082-4b4c-be07-954da581b881)
 
 
 
-Avec le lien https://github.com/Doubledom45/HA-2024.3-RFPLAYER
+Avec le lien https://github.com/Doubledom45/TEST-RFPLAYER
 
 Catégorie 
 
@@ -14,16 +12,19 @@ Intégration
 
 ![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/005e2d82-dbfc-4f72-a347-6ded885e8eaa)
 
-![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/edb5a6a6-1ff4-44d1-8b51-a9e73e7d1d13)
+
 
 
 ## Test avec new repos
 
-![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/8e09181d-be73-4bea-9a67-6e1daa94d972)
+<img width="454" height="78" alt="image" src="https://github.com/user-attachments/assets/cebcc328-ebf3-42d2-adde-11c307c46a85" />
+
+
 
 ## Téléchargement
 
-![image](https://github.com/Doubledom45/HA-2024.3-RFPLAYER/assets/97252459/765188fc-54a6-4238-a2cf-48c91f73e33e)
+<img width="473" height="76" alt="image" src="https://github.com/user-attachments/assets/57d7856a-ed4e-4dea-84bf-084c18327ff9" />
+
 
 # Reboot
 ## Ajout dans intégration
