@@ -3,8 +3,10 @@
 
 # HA-2025.11-RFPLAYER
 						## NEW Version RFPLAYER EN HA 2025.11
-# 🔎 Voir Lisez_moi.md en Français
-Pour installation👁‍🗨 👉 [Lisez_moi FR](https://github.com/Doubledom45/TEST-RFPLAYER/blob/main/Lisez_moi.md) 
+						
+							Pour installation👁‍🗨 👇
+# 🔎 [Voir Lisez_moi.md en Français](https://github.com/Doubledom45/TEST-RFPLAYER/blob/main/Lisez_moi.md)
+
 
 # Pour l'API voir la doc dans Information
 
