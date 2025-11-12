@@ -1,10 +1,10 @@
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Doubledom45&repository=TEST-RFPLAYER&category=integration)
 # ATTENTION FAIRE UNE SAUVEGARDE AVANT INSTALLATION
 
 # HA-2025.11-RFPLAYER
 						## NEW Version RFPLAYER EN HA 2025.11
 # 🔎 Voir Lisez_moi.md en Français
-		Pour installation👁‍🗨 👇
-  ([HA-2025.11-RFPLAYER](https://github.com/Doubledom45/TEST-RFPLAYER/blob/main/Lisez_moi.md))
+Pour installation👁‍🗨 👉 [Lisez_moi FR](https://github.com/Doubledom45/TEST-RFPLAYER/blob/main/Lisez_moi.md) 
 
 # Pour l'API voir la doc dans Information
 
