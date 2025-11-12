@@ -1,4 +1,5 @@
 ## ATTENTION VERSION 2025.11
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Doubledom45&repository=TEST-RFPLAYER&category=integration)
 # Installation depuis HACS
 
 
