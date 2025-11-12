@@ -1,4 +1,6 @@
 # CHANGELOG
+## 1.4
+Modification pour version HA 2025.11 structure des entités cover !
 ## 1.3
 Rectification traduction, modification configuration auto
 ## 1.2
